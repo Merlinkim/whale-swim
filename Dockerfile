@@ -10,6 +10,6 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY . /app
 
-EXPOSE 8080
+EXPOSE 8089
 
 CMD ["python", "-m", "src.main", "--config", "config/paper_targets.yaml", "--serve", "--schedule"]

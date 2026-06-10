@@ -43,6 +43,8 @@ docker compose up -d --build
 http://localhost:8089
 ```
 
+첫 실행은 데이터 갱신이 백그라운드로 돌아가고, 화면은 바로 열립니다.
+
 ## 설정 파일
 
 `config/paper_targets.yaml`만 수정하면 됩니다.
