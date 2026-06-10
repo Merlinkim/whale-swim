@@ -1,8 +1,10 @@
 global:
   database_path: "data/papers.db"
   output_dir: "outputs"
+  port: 8089
   min_year: 2020
   max_results_per_keyword: 50
+  # Daily update time in 24-hour HH:MM format.
   daily_schedule: "06:00"
 
 sources:

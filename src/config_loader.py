@@ -11,6 +11,7 @@ import yaml
 class GlobalConfig:
     database_path: str = "data/papers.db"
     output_dir: str = "outputs"
+    port: int = 8089
     min_year: int = 2020
     max_results_per_keyword: int = 50
     daily_schedule: str = "06:00"
@@ -55,6 +56,7 @@ def load_config(config_path: str | Path) -> AppConfig:
     global_config = GlobalConfig(
         database_path=str(global_section.get("database_path", "data/papers.db")),
         output_dir=str(global_section.get("output_dir", "outputs")),
+        port=int(global_section.get("port", 8089)),
         min_year=int(global_section.get("min_year", 2020)),
         max_results_per_keyword=int(global_section.get("max_results_per_keyword", 50)),
         daily_schedule=str(global_section.get("daily_schedule", "06:00")),

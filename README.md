@@ -1,193 +1,102 @@
 # Paper Indexer
 
-Local-first academic paper indexing system for browsing paper metadata from OpenAlex, arXiv, Semantic Scholar, and optional Google Scholar.
+OpenAlex, arXiv, Semantic Scholar(선택)을 모아 SQLite에 저장하고, 정적 HTML로 보여주는 로컬 우선 paper indexer입니다.
 
-This project intentionally does **not** summarize, score, classify, or rank papers. It only collects, stores, sorts, filters, and displays metadata.
+## 빠른 시작
 
-## Features
-
-- Python 3.11+
-- SQLite storage
-- Static HTML output
-- Client-side filtering and sorting
-- Docker Compose deployment
-- Daily scheduled refreshes inside the container
-- Optional Google Scholar source, disabled by default
-
-## Project Layout
-
-- `config/paper_targets.yaml`: topic and source configuration
-- `data/papers.db`: SQLite database
-- `outputs/index.html`: generated static site
-- `outputs/latest_results.json`: JSON export
-- `outputs/latest_results.csv`: CSV export
-
-## Installation
-
-Install dependencies locally:
+1. Docker 설치
+   - macOS: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+   - 확인:
 
 ```bash
-python3.11 -m pip install -r requirements.txt
+docker --version
+docker compose version
 ```
 
-## Configuration
-
-Edit `config/paper_targets.yaml` to control:
-
-- database path
-- output directory
-- minimum year
-- maximum results per keyword
-- daily schedule
-- enabled sources
-- topics and keywords
-
-Add new topics by appending another topic block with a `name` and `keywords` list.
-
-## Manual Run
-
-Run one indexing pass:
+2. 저장소 받기
 
 ```bash
-python -m src.main --config config/paper_targets.yaml --once
+git clone git@github.com:Merlinkim/whale-swim.git
+cd whale-swim
 ```
 
-Run only one topic:
+3. `config/paper_targets.yaml` 수정
+   - `global.port`: 접속 포트
+   - `global.daily_schedule`: 자동 갱신 시간 (`HH:MM`)
+   - `topics[*].keywords`: 검색 키워드
+
+4. Docker Compose용 포트 동기화
 
 ```bash
-python -m src.main --config config/paper_targets.yaml --topic slam --once
+python3 scripts/sync_compose_env.py
 ```
 
-Run the scheduler service directly:
+5. 실행
 
 ```bash
-python -m src.scheduler --config config/paper_targets.yaml
+docker compose up -d --build
 ```
 
-## Docker Usage
-
-Build and start the service:
-
-```bash
-docker compose build
-docker compose up -d
-```
-
-Open:
+6. 접속
 
 ```text
 http://localhost:8089
 ```
 
-Manual one-time Docker run:
+## 설정 파일
 
-```bash
-docker compose run --rm paper-indexer python -m src.main --config config/paper_targets.yaml --once
-```
+`config/paper_targets.yaml`만 수정하면 됩니다.
 
-## Volumes
-
-The container expects these bind mounts:
-
-- `./data:/app/data`
-- `./outputs:/app/outputs`
-- `./config:/app/config`
-
-These keep the database, generated site, and configuration persistent across restarts.
-
-## Daily Updates
-
-The default schedule is `06:00` every day. The long-running container:
-
-1. loads config
-2. fetches metadata
-3. updates SQLite
-4. regenerates the static site
-5. serves `outputs/` on port `8080` inside the container and maps it to host port `8089`
-6. keeps a daily scheduler running
-
-## Google Scholar Limitations
-
-Google Scholar is disabled by default.
-
-- It may fail because of CAPTCHA, rate limits, or anti-bot protection.
-- The implementation stops immediately when unusual traffic is detected.
-- No bypass or evasion logic is included.
-- If enabled, it appears as its own source tab.
-
-## Mac mini deployment example
-
-1. Clone the repository on the Mac mini.
-2. Edit `config/paper_targets.yaml`.
-3. Run:
-
-```bash
-docker compose up -d
-```
-
-4. Open `http://localhost:8089` in a browser on the machine or via the local network.
-
-## VPS deployment example
-
-1. Install Docker and Docker Compose on the VPS.
-2. Clone the repository.
-3. Expose port `8089` through your firewall or reverse proxy.
-4. Start the service:
-
-```bash
-docker compose up -d
-```
-
-If you want a different host port, adjust the Compose port mapping.
-
-## Local Serving
-
-The generated site is a single-page static HTML app. It does not require a database server or any backend process once generated.
-
-## Troubleshooting
-
-- If a source returns no data, check the network and source rate limits.
-- If Google Scholar is enabled and returns no data, CAPTCHAs or unusual traffic detection likely blocked the request.
-- If the page is empty, verify the config keywords and `min_year`.
-- If Docker cannot bind port `8089`, change the port mapping in `docker-compose.yml`.
-
-## Example Generated HTML Structure
-
-The generated page is a single HTML file with:
-
-- a header
-- search inputs for title and author
-- topic selector
-- sort selector
-- source tabs
-- a card list rendered client-side from embedded JSON
-
-## Scheduler Configuration Example
-
-Default cron-style schedule:
+예시:
 
 ```yaml
 global:
+  port: 8089
   daily_schedule: "06:00"
+
+topics:
+  - name: "slam"
+    keywords:
+      - "SLAM"
+      - "Visual SLAM"
+      - "LiDAR SLAM"
 ```
 
-Equivalent daily cron intent:
+## 자주 쓰는 명령
 
-```text
-0 6 * * *
+```bash
+docker compose up -d --build
+docker compose logs -f paper-indexer
+docker compose run --rm paper-indexer python -m src.main --config config/paper_targets.yaml --once
+python -m src.main --config config/paper_targets.yaml --once
+python -m src.main --config config/paper_targets.yaml --topic slam --once
+python -m src.scheduler --config config/paper_targets.yaml
 ```
 
-## Known Limitations
+## 포트 변경
 
-- Data quality depends on the upstream source metadata.
-- The current implementation stores one merged record per deduplicated paper.
-- Google Scholar is best-effort only.
-- The static site is intentionally simple and client-side only.
+1. `config/paper_targets.yaml`의 `global.port` 수정
+2. `python3 scripts/sync_compose_env.py` 실행
+3. `docker compose up -d --build` 실행
 
-## Future Extension Points
+## 자동 갱신
 
-- Add more metadata sources.
-- Add pagination or lazy loading in the HTML view.
-- Add richer export formats.
-- Add incremental source caching.
-- Add scheduled source-specific refresh controls.
+`global.daily_schedule`에 `HH:MM` 형식으로 적으면 매일 그 시간에 자동 갱신합니다.
+
+예:
+
+- `"06:00"`: 매일 오전 6시
+- `"13:30"`: 매일 오후 1시 30분
+
+## 출력물
+
+- `data/papers.db`
+- `outputs/index.html`
+- `outputs/latest_results.json`
+- `outputs/latest_results.csv`
+
+## 주의
+
+- Google Scholar는 기본 비활성화입니다.
+- CAPTCHA, rate limit, unusual traffic가 나오면 즉시 중단합니다.
+- 포트를 바꾸면 `config/paper_targets.yaml`과 `.env`를 다시 맞춰야 합니다.
