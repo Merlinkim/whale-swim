@@ -1,0 +1,11 @@
+services:
+  paper-indexer:
+    build: .
+    container_name: paper-indexer
+    restart: unless-stopped
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./data:/app/data
+      - ./outputs:/app/outputs
+      - ./config:/app/config

@@ -1,0 +1,50 @@
+global:
+  database_path: "data/papers.db"
+  output_dir: "outputs"
+  min_year: 2020
+  max_results_per_keyword: 50
+  daily_schedule: "06:00"
+
+sources:
+  openalex:
+    enabled: true
+
+  semantic_scholar:
+    enabled: true
+
+  arxiv:
+    enabled: true
+
+  google_scholar:
+    enabled: false
+
+topics:
+  - name: "slam"
+    keywords:
+      - "SLAM"
+      - "Visual SLAM"
+      - "LiDAR SLAM"
+      - "RGB-D SLAM"
+      - "Neural SLAM"
+      - "Semantic SLAM"
+
+  - name: "odometry"
+    keywords:
+      - "Visual Odometry"
+      - "Visual Inertial Odometry"
+      - "LiDAR Odometry"
+
+  - name: "registration"
+    keywords:
+      - "3D Registration"
+      - "Point Cloud Registration"
+      - "ICP"
+      - "Generalized ICP"
+      - "TEASER++"
+
+  - name: "reconstruction"
+    keywords:
+      - "3D Reconstruction"
+      - "Structure from Motion"
+      - "NeRF"
+      - "Gaussian Splatting"
