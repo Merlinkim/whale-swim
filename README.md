@@ -1,6 +1,6 @@
 # Paper Indexer
 
-OpenAlex, arXiv, Semantic Scholar(선택)을 모아 SQLite에 저장하고, 정적 HTML로 보여주는 로컬 우선 paper indexer입니다.
+OpenAlex, arXiv, Semantic Scholar(선택), IEEE Xplore(선택)을 모아 SQLite에 저장하고, 정적 HTML로 보여주는 로컬 우선 paper indexer입니다.
 
 ## 빠른 시작
 
@@ -24,6 +24,7 @@ cd whale-swim
    - `global.port`: 접속 포트
    - `global.daily_schedule`: 자동 갱신 시간 (`HH:MM`)
    - `topics[*].keywords`: 검색 키워드
+   - `sources.ieee_xplore.enabled`: IEEE Xplore 사용 여부
 
 4. Docker Compose용 포트 동기화
 
@@ -55,6 +56,10 @@ http://localhost:8089
 global:
   port: 8089
   daily_schedule: "06:00"
+
+sources:
+  ieee_xplore:
+    enabled: false
 
 topics:
   - name: "slam"
@@ -100,5 +105,6 @@ python -m src.scheduler --config config/paper_targets.yaml
 ## 주의
 
 - Google Scholar는 기본 비활성화입니다.
+- IEEE Xplore는 기본 비활성화입니다.
 - CAPTCHA, rate limit, unusual traffic가 나오면 즉시 중단합니다.
 - 포트를 바꾸면 `config/paper_targets.yaml`과 `.env`를 다시 맞춰야 합니다.

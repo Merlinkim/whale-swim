@@ -7,6 +7,7 @@ from src.config_loader import AppConfig
 from src.models.paper import Paper
 from src.sources.arxiv_client import ArxivClient
 from src.sources.google_scholar_optional import GoogleScholarOptionalClient
+from src.sources.ieee_xplore_optional import IEEEXploreOptionalClient
 from src.sources.openalex_client import OpenAlexClient
 from src.sources.semantic_scholar_client import SemanticScholarClient
 
@@ -15,6 +16,7 @@ SOURCE_LABELS: dict[str, str] = {
     "openalex": "OpenAlex",
     "arxiv": "arXiv",
     "semantic_scholar": "Semantic Scholar",
+    "ieee_xplore": "IEEE Xplore",
     "google_scholar": "Google Scholar",
 }
 
@@ -24,6 +26,7 @@ def _build_clients(timeout_seconds: int) -> dict[str, object]:
         "openalex": OpenAlexClient(timeout_seconds=timeout_seconds),
         "arxiv": ArxivClient(timeout_seconds=timeout_seconds),
         "semantic_scholar": SemanticScholarClient(timeout_seconds=timeout_seconds),
+        "ieee_xplore": IEEEXploreOptionalClient(timeout_seconds=timeout_seconds),
         "google_scholar": GoogleScholarOptionalClient(timeout_seconds=timeout_seconds),
     }
 

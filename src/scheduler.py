@@ -51,8 +51,9 @@ def run_index_update(config: AppConfig, topic_filter: str | None = None) -> dict
             topics=[topic.name for topic in config.topics],
             source_labels=[
                 ("openalex", "OpenAlex"),
-                ("arxiv", "arXiv"),
+                ("arxiv", "ArXiv"),
                 ("semantic_scholar", "Semantic Scholar"),
+                ("ieee_xplore", "IEEE Xplore"),
                 ("google_scholar", "Google Scholar"),
             ],
         )

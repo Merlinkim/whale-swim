@@ -37,7 +37,7 @@ class AppConfig:
     config_path: Path
 
 
-DEFAULT_SOURCE_ORDER = ["openalex", "semantic_scholar", "arxiv", "google_scholar"]
+DEFAULT_SOURCE_ORDER = ["openalex", "semantic_scholar", "arxiv", "ieee_xplore", "google_scholar"]
 
 
 def _as_bool(value: Any, default: bool = False) -> bool:

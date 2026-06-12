@@ -17,6 +17,9 @@ sources:
   arxiv:
     enabled: true
 
+  ieee_xplore:
+    enabled: false
+
   google_scholar:
     enabled: false
 
